@@ -41,7 +41,7 @@ export const currencies: Currency[] = [
 // Mock exchange rates - in real app, this would come from an API
 export const exchangeRates: Record<string, number> = {
   "USD": 1,
-  "IDR": 15750,
+  "IDR": 16670,
   "EUR": 0.85,
   "GBP": 0.73,
   "JPY": 110,
