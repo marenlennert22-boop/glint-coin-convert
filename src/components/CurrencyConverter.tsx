@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
-import { ArrowUpDown, TrendingUp } from "lucide-react";
+import { ArrowUpDown, TrendingUp, RefreshCw, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { CurrencySelect } from "./CurrencySelect";
-import { currencies, convertCurrency, getExchangeRate, getCurrencyByCode } from "@/lib/currencies";
+import { currencies, getCurrencyByCode } from "@/lib/currencies";
+import { useExchangeRates } from "@/hooks/useExchangeRates";
 
 export const CurrencyConverter = () => {
   const [amount, setAmount] = useState<string>("1");
@@ -13,14 +14,16 @@ export const CurrencyConverter = () => {
   const [convertedAmount, setConvertedAmount] = useState<number>(0);
   const [exchangeRate, setExchangeRate] = useState<number>(0);
 
+  const { getRate, updateRates, loading, lastUpdated } = useExchangeRates();
+
   useEffect(() => {
     const numAmount = parseFloat(amount) || 0;
-    const converted = convertCurrency(numAmount, fromCurrency, toCurrency);
-    const rate = getExchangeRate(fromCurrency, toCurrency);
+    const rate = getRate(fromCurrency, toCurrency);
+    const converted = numAmount * rate;
     
     setConvertedAmount(converted);
     setExchangeRate(rate);
-  }, [amount, fromCurrency, toCurrency]);
+  }, [amount, fromCurrency, toCurrency, getRate]);
 
   const swapCurrencies = () => {
     setFromCurrency(toCurrency);
@@ -41,12 +44,33 @@ export const CurrencyConverter = () => {
     <div className="w-full max-w-2xl mx-auto space-y-6">
       <Card className="bg-currency-card border-0 shadow-xl">
         <CardHeader className="text-center pb-6">
-          <CardTitle className="text-3xl font-bold bg-gradient-primary bg-clip-text text-transparent">
-            Currency Converter
-          </CardTitle>
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex-1" />
+            <CardTitle className="text-3xl font-bold bg-gradient-primary bg-clip-text text-transparent">
+              Currency Converter
+            </CardTitle>
+            <div className="flex-1 flex justify-end">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={updateRates}
+                disabled={loading}
+                className="gap-2"
+              >
+                <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
+                Update Rates
+              </Button>
+            </div>
+          </div>
           <p className="text-muted-foreground">
-            Convert between world currencies instantly
+            Convert between world currencies with real-time rates
           </p>
+          {lastUpdated && (
+            <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground mt-2">
+              <Clock className="h-3 w-3" />
+              <span>Last updated: {lastUpdated.toLocaleTimeString()}</span>
+            </div>
+          )}
         </CardHeader>
         <CardContent className="space-y-6">
           {/* From Currency */}

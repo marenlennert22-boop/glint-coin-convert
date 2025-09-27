@@ -14,16 +14,135 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      exchange_rates: {
+        Row: {
+          created_at: string | null
+          from_currency: string
+          id: string
+          rate: number
+          to_currency: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          from_currency: string
+          id?: string
+          rate: number
+          to_currency: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          from_currency?: string
+          id?: string
+          rate?: number
+          to_currency?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          full_name: string | null
+          id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          full_name?: string | null
+          id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          full_name?: string | null
+          id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      qr_codes: {
+        Row: {
+          batch_id: string | null
+          content: string
+          created_at: string
+          format: string | null
+          id: string
+          is_bulk_generation: boolean | null
+          quality: string | null
+          user_id: string
+        }
+        Insert: {
+          batch_id?: string | null
+          content: string
+          created_at?: string
+          format?: string | null
+          id?: string
+          is_bulk_generation?: boolean | null
+          quality?: string | null
+          user_id: string
+        }
+        Update: {
+          batch_id?: string | null
+          content?: string
+          created_at?: string
+          format?: string | null
+          id?: string
+          is_bulk_generation?: boolean | null
+          quality?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_user_qr_count: {
+        Args: { _user_id: string }
+        Returns: number
+      }
+      get_user_qr_limit: {
+        Args: { _user_id: string }
+        Returns: number
+      }
+      get_user_role: {
+        Args: { _user_id: string }
+        Returns: Database["public"]["Enums"]["app_role"]
+      }
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "Free" | "Premium" | "VIP"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +269,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["Free", "Premium", "VIP"],
+    },
   },
 } as const
